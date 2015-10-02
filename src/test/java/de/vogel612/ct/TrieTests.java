@@ -1,8 +1,9 @@
+package de.vogel612.ct;
+
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-import de.vogel612.ct.CompressedTrie;
 
 /**
  * Created by vogel612 on 02.10.15.
