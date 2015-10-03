@@ -11,29 +11,29 @@ import java.util.function.Predicate;
  * <p>A Node maintains a collection of child nodes, it's own prefix and the information whether it stores
  * a complete word. This means in a Trie that contains "box" and "boxes", you get following picture:</p>
  * <p>
- * <tt>
+ * <pre>
  * [box, true]
- * |
+ *     |
  * [es, true]
- * </tt>
+ * </pre>
  * <p>
  * <p>Adding another word like "boxing" results in:</p>
  * <p>
- * <tt>
- * [box, true]
- * /         \
+ * <pre>
+ *      [box, true]
+ *      /         \
  * [es, true]   [ing, true]
- * </tt>
+ * </pre>
  * <p>
  * <p>A node that's not a full word will only appear when you add "boxer"</p>
  * <p>
- * <tt>
- * [box, true]
- * /         \
- * [e, false]   [ing, true]
- * /      \
+ * <pre>
+ *           [box, true]
+ *           /         \
+ *      [e, false]   [ing, true]
+ *       /      \
  * [s, true]  [r, true]
- * </tt>
+ * </pre>
  * <p>
  * Created by vogel612 on 02.10.15.
  */

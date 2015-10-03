@@ -65,6 +65,7 @@ public class CompressedTrie {
         return false;
     }
 
+    // FIXME implement .iterator over matches
     public List<String> matches(String prefix) {
         return matchesStream(prefix).collect(Collectors.toList());
     }
