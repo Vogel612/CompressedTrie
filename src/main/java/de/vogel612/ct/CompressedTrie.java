@@ -16,14 +16,19 @@ public class CompressedTrie {
 
     private final TrieNode root = new TrieNode("");
 
-    public CompressedTrie() {}
+    public CompressedTrie() {
+    }
 
     public CompressedTrie(Collection<String> items) {
-        items.stream().forEach(this::add);
+        addAll(items);
     }
 
     public void add(String newString) {
         root.addChild(newString);
+    }
+
+    public void addAll(Collection<String> items) {
+        items.stream().forEach(this::add);
     }
 
     public boolean remove(String word) {
@@ -73,6 +78,7 @@ public class CompressedTrie {
      * The word must match with the prefix of the current node.
      *
      * @param word The word (including this node's prefix) to search
+     *
      * @return a flag indicating whether the word matches the subtree
      */
     private boolean findWord(final String word) {

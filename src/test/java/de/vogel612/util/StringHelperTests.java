@@ -11,13 +11,13 @@ import org.junit.Test;
 public class StringHelperTests {
 
     private final String[][] cases = new String[][]{
-      {"test", "tester", "testing"},
-      {"", "asdf", "bla"},
-      {"box", "boxer", "boxing"},
-      {"bo", "box", "boss"},
-      {"blue", "blue", "blue"},
-      {"", "", "bla"},
-      {"", "bla", ""}
+      { "test", "tester", "testing" },
+      { "", "asdf", "bla" },
+      { "box", "boxer", "boxing" },
+      { "bo", "box", "boss" },
+      { "blue", "blue", "blue" },
+      { "", "", "bla" },
+      { "", "bla", "" }
     };
 
     @Test

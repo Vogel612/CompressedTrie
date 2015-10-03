@@ -27,7 +27,7 @@ public class TrieNodeTests {
     }
 
     @Test
-    public void equality_respectsCase(){
+    public void equality_respectsCase() {
         TrieNode one = new TrieNode("test");
         TrieNode other = new TrieNode("Test");
         assertFalse(one.equals(other));
@@ -100,5 +100,22 @@ public class TrieNodeTests {
             assertTrue(leaf.isCompleteWord);
             assertTrue(leaf.prefix.equals("es") || leaf.prefix.equals("ing"));
         }
+    }
+
+    @Test
+    public void prefixSplittingTree() {
+        TrieNode root = new TrieNode("");
+        root.addChild("boxes");
+        root.addChild("box");
+
+        assertTrue(root.children.size() == 1);
+        final TrieNode node = root.children.iterator().next();
+        assertEquals(node.prefix, "box");
+        assertTrue(node.children.size() == 1);
+        assertTrue(node.isCompleteWord);
+        final TrieNode leaf = node.children.iterator().next();
+        assertEquals(leaf.prefix, "es");
+        assertTrue(leaf.children.size() == 0);
+        assertTrue(leaf.isCompleteWord);
     }
 }

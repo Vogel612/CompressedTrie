@@ -83,7 +83,7 @@ public class TrieTests {
     @Test
     public void removeAll_removesAllRelevantNodes() {
         Collection<String> items = Arrays.asList("test", "foo", "bar", "quux");
-        items.stream().forEach(cut::add);
+        cut.addAll(items);
         assertTrue(cut.containsAll(items));
         boolean result = cut.removeAll(items);
         assertFalse(cut.containsAny(items));
@@ -97,5 +97,12 @@ public class TrieTests {
         boolean result = cut.removeAll(Arrays.asList("test", "random"));
         assertFalse(cut.contains("test"));
         assertFalse(result);
+    }
+
+    @Test
+    public void copyConstructor() {
+        Collection<String> items = Arrays.asList("test", "foo", "bar", "quux");
+        cut = new CompressedTrie(items);
+        assertTrue(cut.containsAll(items));
     }
 }

@@ -4,38 +4,37 @@ import static de.vogel612.util.StringHelper.longestCommonPrefix;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 /**
  * Node to contain data for prefix-based searches.
- *
+ * <p>
  * <p>A Node maintains a collection of child nodes, it's own prefix and the information whether it stores
  * a complete word. This means in a Trie that contains "box" and "boxes", you get following picture:</p>
- *
+ * <p>
  * <tt>
- *     [box, true]
- *         |
- *     [es, true]
+ * [box, true]
+ * |
+ * [es, true]
  * </tt>
- *
+ * <p>
  * <p>Adding another word like "boxing" results in:</p>
- *
+ * <p>
  * <tt>
- *          [box, true]
- *          /         \
- *     [es, true]   [ing, true]
+ * [box, true]
+ * /         \
+ * [es, true]   [ing, true]
  * </tt>
- *
+ * <p>
  * <p>A node that's not a full word will only appear when you add "boxer"</p>
- *
+ * <p>
  * <tt>
- *          [box, true]
- *          /         \
- *     [e, false]   [ing, true]
- *      /      \
- *  [s, true]  [r, true]
+ * [box, true]
+ * /         \
+ * [e, false]   [ing, true]
+ * /      \
+ * [s, true]  [r, true]
  * </tt>
- *
+ * <p>
  * Created by vogel612 on 02.10.15.
  */
 class TrieNode {
@@ -46,6 +45,7 @@ class TrieNode {
     static Predicate<TrieNode> prefixMatching(String newString) {
         return child -> newString.startsWith(child.prefix);
     }
+
     static Predicate<TrieNode> splitNodeMatching(String newString) {
         return child -> child.prefix.startsWith(newString);
     }
@@ -65,9 +65,9 @@ class TrieNode {
 
     Optional<TrieNode> matchingChild(Predicate<TrieNode> condition) {
         Objects.requireNonNull(condition, "Cannot find prefixes for null strings");
-       return  children.stream()
-         .filter(condition)
-         .findFirst();
+        return children.stream()
+          .filter(condition)
+          .findFirst();
     }
 
     public void addChild(final String newString) {
@@ -84,8 +84,9 @@ class TrieNode {
     /**
      * Handles adding a child to this node when the {@link #prefixMatching(String)}
      * does not apply to any children.
-     *
+     * <p>
      * Checks for {@link #splitNodeMatching(String)} children to split and maintain or adds a new Child
+     *
      * @param newString The String data that need to be added
      */
     private void prefixMissing(String newString) {
@@ -137,11 +138,12 @@ class TrieNode {
 
     /**
      * Handles adding a child to this node when the {@link #prefixMatching(String)} returned a matching Child
-     *
+     * <p>
      * If the child node's prefix and the word to add match, the node is marked as complete word, else the
      * word to add is cut and handed down to the node for adding.
+     *
      * @param newString The Content to add to the subtree below this node
-     * @param node The child node with matching prefix
+     * @param node      The child node with matching prefix
      */
     private void prefixPresent(String newString, TrieNode node) {
         if (node.prefix.length() == newString.length()) {
