@@ -4,8 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 
 public class TrieNodeTests {
     @Test
@@ -114,5 +113,49 @@ public class TrieNodeTests {
         assertEquals(leaf.prefix, "es");
         assertTrue(leaf.children.size() == 0);
         assertTrue(leaf.isCompleteWord);
+    }
+
+    @Test
+    public void subtreeWordNodes() {
+        TrieNode root = new TrieNode("");
+        root.addChild("box");
+        root.addChild("boxes");
+
+        TrieNode subnode = root.children.iterator().next();
+        Collection<String> subtreeData = new ArrayList<>();
+        subnode.subtreeWordNodes("asd", subtreeData);
+        assertEquals("asdes", subtreeData.iterator().next());
+
+        subtreeData.clear();
+        root.subtreeWordNodes("", subtreeData);
+        assertTrue(subtreeData.contains("box"));
+        assertTrue(subtreeData.contains("boxes"));
+    }
+
+    @Test
+    public void findSubtreeNode() {
+        TrieNode root = new TrieNode("");
+        root.addChild("box");
+        root.addChild("boxes");
+
+        TrieNode boxNode = root.children.iterator().next();
+        TrieNode esNode = boxNode.children.iterator().next();
+
+        Map<TrieNode, String> results = root.findMatchingSubtree("", "b");
+        assertSame(boxNode, results.keySet().iterator().next());
+        assertEquals("box", results.values().iterator().next());
+
+        results = root.findMatchingSubtree("", "boxe");
+        assertSame(esNode, results.keySet().iterator().next());
+        assertEquals("boxes", results.values().iterator().next());
+    }
+
+    @Test
+    public void emptySubtreeNode() {
+        TrieNode root = new TrieNode("");
+
+        Map<TrieNode, String> results = root.findMatchingSubtree("test", "b");
+        assertTrue(results.keySet().iterator().next() == null);
+        assertEquals("test", results.values().iterator().next());
     }
 }

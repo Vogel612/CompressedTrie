@@ -156,6 +156,33 @@ class TrieNode {
         }
     }
 
+    Map<TrieNode, String> findMatchingSubtree(final String currentWord, final String remainingPrefix) {
+        Optional<TrieNode> matchingChild = matchingChild(prefixMatching(remainingPrefix));
+        if (!matchingChild.isPresent()) {
+            // Check for partial prefix match
+            Optional<TrieNode> existingChild = matchingChild(splitNodeMatching(remainingPrefix));
+            if (existingChild.isPresent()) {
+                return Collections.singletonMap(existingChild.get(), currentWord + existingChild.get().prefix);
+            }
+            return Collections.singletonMap(null, currentWord);
+        }
+        TrieNode child = matchingChild.get();
+        if (child.prefix.equals(remainingPrefix)) {
+            return Collections.singletonMap(child, currentWord + remainingPrefix);
+        }
+        return child.findMatchingSubtree(currentWord + child.prefix, remainingPrefix.substring(child.prefix.length()));
+    }
+
+    void subtreeWordNodes(String currentWord, Collection<String> out) {
+        for (TrieNode child : children) {
+            String traversalWord = currentWord + child.prefix;
+            if (child.isCompleteWord) {
+                out.add(traversalWord);
+            }
+            child.subtreeWordNodes(traversalWord, out);
+        }
+    }
+
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof TrieNode)) {

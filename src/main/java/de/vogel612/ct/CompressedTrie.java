@@ -2,10 +2,7 @@ package de.vogel612.ct;
 
 import static de.vogel612.ct.TrieNode.prefixMatching;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,13 +62,18 @@ public class CompressedTrie {
         return false;
     }
 
-    // FIXME implement .iterator over matches
     public List<String> matches(String prefix) {
-        return matchesStream(prefix).collect(Collectors.toList());
-    }
-
-    public Stream<String> matchesStream(String prefix) {
-        return Stream.of(new String[]{});
+        Map<TrieNode, String> subtreeData = root.findMatchingSubtree("", prefix);
+        TrieNode subtree = subtreeData.keySet().iterator().next(); // only one entry
+        if (subtree == null) {
+            return Collections.emptyList();
+        }
+        List<String> matches = new LinkedList<>();
+        if (subtree.isCompleteWord) {
+            matches.add(subtreeData.get(subtree));
+        }
+        subtree.subtreeWordNodes(subtreeData.get(subtree), matches);
+        return matches;
     }
 
     /**
@@ -92,6 +94,7 @@ public class CompressedTrie {
         Objects.requireNonNull(word, "Cannot look for a null word");
         TrieNode wordNode = findWordNode(word, root);
         if (wordNode != null) {
+            // FIXME purge orphaned childnodes
             wordNode.isCompleteWord = false;
             return true;
         }

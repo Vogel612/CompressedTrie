@@ -1,6 +1,7 @@
 package de.vogel612.ct;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -8,6 +9,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by vogel612 on 02.10.15.
@@ -104,5 +106,25 @@ public class TrieTests {
         Collection<String> items = Arrays.asList("test", "foo", "bar", "quux");
         cut = new CompressedTrie(items);
         assertTrue(cut.containsAll(items));
+    }
+
+    @Test
+    public void matchesTesting() {
+        cut.add("test");
+        cut.add("testing");
+        cut.add("twitter");
+        cut.add("twerk");
+
+        Collection<String> expected = Arrays.asList("test", "testing", "twitter", "twerk");
+        List<String> actual = cut.matches("t");
+        assertTrue(actual.containsAll(expected));
+
+        expected = Arrays.asList("test", "testing");
+        actual = cut.matches("tes");
+        assertTrue(actual.containsAll(expected));
+
+        expected = Arrays.asList("twitter", "twerk");
+        actual = cut.matches("tw");
+        assertTrue(actual.containsAll(expected));
     }
 }
