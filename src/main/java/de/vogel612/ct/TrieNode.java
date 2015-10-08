@@ -52,8 +52,8 @@ class TrieNode {
 
     public TrieNode(final String prefix) {
         Objects.requireNonNull(prefix, "Cannot create TrieNode without prefix");
-        // assume true
         this.prefix = prefix;
+        // assume true
         this.isCompleteWord = true;
     }
 
@@ -156,6 +156,14 @@ class TrieNode {
         }
     }
 
+    /**
+     * finds the subtree matching a given prefix while maintaining the traversed
+     * nodes of the prefix-tree by recursively invoking itself on the matching children.
+     *
+     * @param currentWord The current word as coming from traversal state
+     * @param remainingPrefix The remaining prefix to be matched
+     * @return A singleton-map containing the subtree's root node and the word associated with the traversal
+     */
     Map<TrieNode, String> findMatchingSubtree(final String currentWord, final String remainingPrefix) {
         Optional<TrieNode> matchingChild = matchingChild(prefixMatching(remainingPrefix));
         if (!matchingChild.isPresent()) {
@@ -173,13 +181,18 @@ class TrieNode {
         return child.findMatchingSubtree(currentWord + child.prefix, remainingPrefix.substring(child.prefix.length()));
     }
 
+    /**
+     * Recursively traverses through a subtree, adding all words found to a given collection.
+     * This includes the current node
+     * @param currentWord The current word in traversal state
+     * @param out The collection to contain the results
+     */
     void subtreeWordNodes(String currentWord, Collection<String> out) {
+        if (isCompleteWord) {
+            out.add(currentWord);
+        }
         for (TrieNode child : children) {
-            String traversalWord = currentWord + child.prefix;
-            if (child.isCompleteWord) {
-                out.add(traversalWord);
-            }
-            child.subtreeWordNodes(traversalWord, out);
+            child.subtreeWordNodes(currentWord + child.prefix, out);
         }
     }
 

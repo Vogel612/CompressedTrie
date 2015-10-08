@@ -124,7 +124,8 @@ public class TrieNodeTests {
         TrieNode subnode = root.children.iterator().next();
         Collection<String> subtreeData = new ArrayList<>();
         subnode.subtreeWordNodes("asd", subtreeData);
-        assertEquals("asdes", subtreeData.iterator().next());
+        assertTrue(subtreeData.contains("asdes"));
+        assertTrue(subtreeData.contains("asd"));
 
         subtreeData.clear();
         root.subtreeWordNodes("", subtreeData);

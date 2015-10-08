@@ -3,12 +3,7 @@ package de.vogel612.ct;
 import static de.vogel612.ct.TrieNode.prefixMatching;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-/**
- * Created by vogel612 on 02.10.15.
- */
 public class CompressedTrie {
 
     private final TrieNode root = new TrieNode("");
