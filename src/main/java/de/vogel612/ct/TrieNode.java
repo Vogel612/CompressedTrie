@@ -63,6 +63,13 @@ class TrieNode {
         this.children.addAll(children);
     }
 
+    /**
+     * Finds and returns the first child matching the given condition
+     *
+     * @param condition The condition that needs to apply to the child
+     *
+     * @return An Optional containing the Child.
+     */
     Optional<TrieNode> matchingChild(Predicate<TrieNode> condition) {
         Objects.requireNonNull(condition, "Cannot find prefixes for null strings");
         return children.stream()
@@ -70,6 +77,16 @@ class TrieNode {
           .findFirst();
     }
 
+    /**
+     * Add a child to this Node. If applicable the adding process is delegated to matching child nodes.
+     * Also child nodes will be created / split where applicable to have only one or zero child nodes matching any
+     * given
+     * prefix.
+     *
+     * @param newString The String to add as child into the subtree with root <tt>this</tt>. For relevant propagation,
+     *                  this string will be shortened and given to the next matching child, effectively traversing the
+     *                  Trie
+     */
     public void addChild(final String newString) {
         Objects.requireNonNull(newString, "Cannot add a null string");
         Optional<TrieNode> prefixChild = matchingChild(prefixMatching(newString));
@@ -125,6 +142,21 @@ class TrieNode {
         return currentMatch;
     }
 
+    /**
+     * Builds a new Child from a given old Child, a prefix and a String that's still to be added to the subtree of
+     * <tt>oldChild</tt>
+     *
+     * @param newPrefix The smallest common prefix of newString and oldChild.prefix, also serving as prefix for the new
+     *                  Node
+     * @param oldChild  The old child node, either null, if no matching childnode is found, or a node that needs to be
+     *                  split.
+     * @param newString The remainder of the String to be added to the subtree. Includes the common prefix
+     *
+     * @return The newly built child node to replace oldChild in the Tree
+     *
+     * @apiNote This new child keeps connections of the old child intact through
+     * {@link TrieNode#TrieNode(String, boolean, Collection)}
+     */
     private TrieNode buildNewChild(String newPrefix, TrieNode oldChild, String newString) {
         if (newPrefix.equals("")) { // no common prefix found
             return new TrieNode(newString);
@@ -160,8 +192,9 @@ class TrieNode {
      * finds the subtree matching a given prefix while maintaining the traversed
      * nodes of the prefix-tree by recursively invoking itself on the matching children.
      *
-     * @param currentWord The current word as coming from traversal state
+     * @param currentWord     The current word as coming from traversal state
      * @param remainingPrefix The remaining prefix to be matched
+     *
      * @return A singleton-map containing the subtree's root node and the word associated with the traversal
      */
     Map<TrieNode, String> findMatchingSubtree(final String currentWord, final String remainingPrefix) {
@@ -184,8 +217,9 @@ class TrieNode {
     /**
      * Recursively traverses through a subtree, adding all words found to a given collection.
      * This includes the current node
+     *
      * @param currentWord The current word in traversal state
-     * @param out The collection to contain the results
+     * @param out         The collection to contain the results
      */
     void subtreeWordNodes(String currentWord, Collection<String> out) {
         if (isCompleteWord) {
