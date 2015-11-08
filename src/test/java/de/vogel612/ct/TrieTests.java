@@ -1,12 +1,12 @@
 package de.vogel612.ct;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matcher.*;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -116,7 +116,7 @@ public class TrieTests {
         cut.add("twerk");
 
         Collection<String> expected = Arrays.asList("test", "testing", "twitter", "twerk");
-        List<String> actual = cut.matches("t");
+        List<String> actual = cut.matches("");
         assertTrue(actual.containsAll(expected));
 
         expected = Arrays.asList("test", "testing");
@@ -126,5 +126,60 @@ public class TrieTests {
         expected = Arrays.asList("twitter", "twerk");
         actual = cut.matches("tw");
         assertTrue(actual.containsAll(expected));
+    }
+
+    @Test
+    public void testSize() {
+        assertEquals(0, cut.size());
+        cut.add("something");
+        cut.add("more");
+        assertEquals(2, cut.size());
+        cut.add("more");
+        assertEquals(2, cut.size());
+    }
+
+    @Test
+    public void testClear() {
+        final List<String> items = Arrays.asList("something", "more", "random");
+        cut.addAll(items);
+        assertEquals(items.size(), cut.size());
+        cut.clear();
+        assertTrue(cut.isEmpty());
+        assertFalse(cut.containsAny(items));
+    }
+
+    @Test
+    public void testEmpty() {
+        assertTrue(cut.isEmpty());
+        cut.add("something");
+        assertFalse(cut.isEmpty());
+    }
+
+    @Test
+    public void contains_returnsFalse_forEmptyTrie() {
+        assertFalse(cut.contains("something"));
+        assertFalse(cut.contains(2));
+    }
+
+    @Test
+    public void remove_returnsFalse_forNonStrings() {
+        assertFalse(cut.remove(2));
+    }
+
+    @Test
+    public void retainAll() {
+        List<String> base = Arrays.asList("something", "random", "and", "some", "other", "items");
+        List<String> others = Arrays.asList("something", "less", "nice", "and", "some", "cranky", "stuff");
+
+        List<String> intersection = new ArrayList<>(base);
+        intersection.retainAll(others);
+        List<String> distinction = new ArrayList<>(base);
+        distinction.removeAll(others);
+
+        cut.addAll(base);
+        assertTrue(cut.containsAll(base));
+        cut.retainAll(others);
+        assertTrue(cut.containsAll(intersection));
+        assertEquals(cut.size(), intersection.size());
     }
 }

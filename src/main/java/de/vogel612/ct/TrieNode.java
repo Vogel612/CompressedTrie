@@ -198,6 +198,10 @@ class TrieNode {
      * @return A singleton-map containing the subtree's root node and the word associated with the traversal
      */
     Map<TrieNode, String> findMatchingSubtree(final String currentWord, final String remainingPrefix) {
+        if (remainingPrefix.equals("")) {
+            return Collections.singletonMap(this, currentWord);
+        }
+
         Optional<TrieNode> matchingChild = matchingChild(prefixMatching(remainingPrefix));
         if (!matchingChild.isPresent()) {
             // Check for partial prefix match

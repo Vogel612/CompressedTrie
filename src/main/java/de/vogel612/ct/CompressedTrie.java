@@ -3,12 +3,12 @@ package de.vogel612.ct;
 import static de.vogel612.ct.TrieNode.prefixMatching;
 
 import java.util.*;
-import java.util.function.BinaryOperator;
 
 public class CompressedTrie implements Collection<String> {
 
-    private final TrieNode root = new TrieNode("");
+    private final TrieNode root = new TrieNode("", false, Collections.emptyList());
 
+    // it's quicker to keep it here than calculating every time
     private int size;
 
     public CompressedTrie() {
@@ -18,6 +18,13 @@ public class CompressedTrie implements Collection<String> {
         addAll(items);
     }
 
+    /**
+     * Adds another String to this instance of CompressedTrie
+     *
+     * @param newString The new String to add to this instance
+     *
+     * @return true, if the collection was modified as a result of this method
+     */
     public boolean add(String newString) {
         if (contains(newString)) {
             return false;
@@ -27,28 +34,62 @@ public class CompressedTrie implements Collection<String> {
         return true;
     }
 
+    /**
+     * Removes all elements but those in the given Collection from this instance of {@link CompressedTrie}.
+     *
+     * @param collection The Items to <b>not</b> remove
+     *
+     * @return true, if the collection changed from invoking this method, else false
+     */
     @Override
     public boolean retainAll(Collection<?> collection) {
-        return false;
+        return matches("").stream()
+          .filter(e -> !collection.contains(e))
+          .map(this::remove)
+          .reduce((b1, b2) -> b1 || b2)
+          .orElse(false);
     }
 
+    /**
+     * Removes all elements from this collection.
+     */
     @Override
     public void clear() {
-        removeAll(matches(""));
+        root.children.clear();
+        root.isCompleteWord = false;
+        size = 0;
     }
 
+    /**
+     * Adds all elements of a given collection to this instance
+     *
+     * @param items The items to add to the collection
+     *
+     * @return true, if the collection changed from invoking this method, false otherwise
+     */
     @Override
     public boolean addAll(Collection<? extends String> items) {
-        return items.stream().map(this::add).reduce((b1, b2) -> b1 && b2).orElse(false);
+        return items.stream()
+          .map(this::add)
+          .reduce((b1, b2) -> b1 || b2)
+          .orElse(false);
     }
 
+    /**
+     * Removes an item from this collection
+     *
+     * @param word The word to remove from the collection
+     *
+     * @return true, if the collection changed from invoking this method, false otherwise
+     */
     @Override
     public boolean remove(Object word) {
         Objects.requireNonNull(word, "Cannot look for a null word");
         if (!(word instanceof String)) {
-            throw new ClassCastException("Trie is only intended for Strings");
+            return false; // throwing is a jerk move :D
         }
-        TrieNode wordNode = findWordNode((String)word, root);
+        // find a way to get to the parent??
+        TrieNode wordNode = findWordNode((String) word, root);
         if (wordNode != null) {
             // FIXME purge orphaned childnodes
             wordNode.isCompleteWord = false;
@@ -58,15 +99,31 @@ public class CompressedTrie implements Collection<String> {
         return false;
     }
 
+    /**
+     * Removes all elements in the given collection from this collection.
+     *
+     * @param words The collection of elements to remove
+     *
+     * @return true, if the collection changed from invoking this method, false otherwises
+     */
     @Override
     public boolean removeAll(Collection<?> words) {
-        boolean result = true;
+        boolean result = false;
         for (Object word : words) {
-            result &= remove(word);
+            result |= remove(word);
         }
         return result;
     }
 
+    /**
+     * Checks whether this collection contains the given item, or to be more correct whether there is an item
+     * <tt>k</tt>
+     * so that <tt>o.equals(k);</tt> is true.
+     *
+     * @param o The item to check for
+     *
+     * @return true or false, indicating whether such an item has been found or not
+     */
     @Override
     public boolean contains(Object o) {
         if (o instanceof String) {
@@ -75,10 +132,28 @@ public class CompressedTrie implements Collection<String> {
         return false;
     }
 
+    /**
+     * Checks whether this collection contains the given String, or more formally:whether there is an item
+     * <tt>k</tt>
+     * so that <tt>o.equals(k);</tt> is true.
+     *
+     * @param word The item to check for
+     *
+     * @return true or false, indicating whether such an item has been found or not
+     */
     public boolean contains(String word) {
         return findWord(word);
     }
 
+    /**
+     * Checks whether this collection contains <b>all</b> of the items in a given Collection
+     *
+     * @param words The items that all have to be in this instance
+     *
+     * @return true or false, depending on whether all items have been found or not
+     *
+     * @implNote Will "short-circuit" on the first element not found
+     */
     @Override
     public boolean containsAll(Collection<?> words) {
         for (Object word : words) {
@@ -157,6 +232,14 @@ public class CompressedTrie implements Collection<String> {
         return null;
     }
 
+    /**
+     * Returns the size of the current collection
+     *
+     * @return The internally cached size as int
+     *
+     * @implNote works with a separate counter incremented when elements are successfully added and decremented when
+     * elements are removed
+     */
     @Override
     public int size() {
         return size;
@@ -167,6 +250,14 @@ public class CompressedTrie implements Collection<String> {
         return size == 0;
     }
 
+    /**
+     * Returns the iterator over the current state of the {@link CompressedTrie}.
+     *
+     * @return The Iterator over the current elements
+     *
+     * @implNote The Iterator is populated eagerly, this means all items are calculated before the iterator is
+     * available
+     */
     @Override
     public Iterator<String> iterator() {
         return matches("").iterator();
