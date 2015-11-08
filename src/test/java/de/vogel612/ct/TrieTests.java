@@ -93,12 +93,12 @@ public class TrieTests {
     }
 
     @Test
-    public void removeAll_returnsFalse_onMissingNodes() {
+    public void removeAll_returnsTrue_onMissingNodes() {
         cut.add("test");
         assertTrue(cut.contains("test"));
         boolean result = cut.removeAll(Arrays.asList("test", "random"));
         assertFalse(cut.contains("test"));
-        assertFalse(result);
+        assertTrue(result);
     }
 
     @Test
